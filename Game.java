@@ -40,7 +40,8 @@ public class Game
     private void createRooms()
     {
         Room outside, theater, pub, lab, office, cellar;
-        Item hammer, gun, sun, sample, mask, winterCoat, magicCookie;
+        Item hammer, gun, sun, sample, mask, winterCoat, magicCookie, wineKey;
+        Door wineDoor, mainEntrance;
       
         // create the rooms
         outside = new Room("outside the main entrance of the university");
@@ -57,7 +58,10 @@ public class Game
         mask = new Item("mask", "Theater mask", 1, true, false, true);
         winterCoat = new Item("coat", "Winter coat", 19, true, false, true);
         magicCookie = new Item("cookie", "Magic cookie - what could this be?", 12, false, true, true);
+        wineKey = new Item("key", "Key for the wine cellar", 1, false, false, true);
 
+        mainEntrance = new Door("Main gate", false, null, "east");
+        wineDoor = new Door("Wine door", true, wineKey, "down");
         
         // initialise room exits
         outside.setExit("east", theater);
@@ -65,6 +69,7 @@ public class Game
         outside.setExit("west", pub);
         outside.setExit("down", office);
         outside.setItem(sun);
+        outside.setDoors(mainEntrance);
 
         theater.setExit("west", outside);
         theater.setItem(sample, mask);
@@ -74,11 +79,13 @@ public class Game
 
         lab.setExit("north", outside);
         lab.setExit("east", office);
+        lab.setItem(wineKey);
 
         office.setExit("west", lab);
         office.setExit("up", outside);
         office.setExit("down", cellar);
         office.setItem(hammer);
+        office.setDoors(wineDoor);
 
         cellar.setExit("superup", office);
         cellar.setItem(magicCookie);
@@ -301,7 +308,18 @@ public class Game
         nextRoom = player1.getCurrentRoom().getExit(direction);
 
         if (nextRoom == null) {
-            System.out.println("There is no door!");
+            if (player1.getCurrentRoom().hasDoors(direction)){
+                if(player1.getInventory().contains(player1.getCurrentRoom().getDoor(direction).getKeyType())) {
+                    player1.getCurrentRoom().getDoor(direction).unlock();
+                    System.out.println("Door has been unlocked");
+                    goRoom(command);
+                }
+                else {
+                    System.out.println("First you need to find the key for the door");
+                }
+            }
+            else
+                System.out.println("There is no door!");
         }
         else {
             player1.addToRoomHistory(player1.getCurrentRoom());
@@ -334,7 +352,8 @@ public class Game
      */
     private void look()
     {
-            System.out.println("OK, then again...");
+        DrawMap map = new DrawMap();
+        System.out.println("OK, then again...");
             System.out.println(player1.getCurrentRoom().getLongDescription());
 
     }

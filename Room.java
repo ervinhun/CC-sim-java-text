@@ -22,6 +22,7 @@ public class Room
     private String description;
     private HashMap<String, Room> exits;
     private List<Item> item = new ArrayList<>();
+    private List<Door> doors = new ArrayList<>();
 
 
 
@@ -53,6 +54,12 @@ public class Room
 
     public Room getExit (String direction)
     {
+        for (Door door : doors) {
+            if (door.getPosition().equals(direction) && door.isLocked())
+                return null;
+            else
+                return exits.get(direction);
+        }
         return exits.get(direction);
     }
 
@@ -97,6 +104,28 @@ public class Room
     public void removeItem(Item item) {
         if (item != null)
             this.item.remove(item);
+    }
+
+    public void setDoors(Door... doors) {
+        for (Door door : doors) {
+            this.doors.add(door);
+        }
+    }
+
+    public boolean hasDoors(String direction) {
+        for (Door door : doors) {
+            if(door.getPosition().equals(direction))
+                return true;
+        }
+        return false;
+    }
+
+    public Door getDoor(String direction) {
+        for (Door door : doors) {
+            if (door.getPosition().equals(direction))
+                return door;
+        }
+        return null;
     }
 
 }
