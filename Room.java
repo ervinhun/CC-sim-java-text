@@ -19,6 +19,7 @@ import java.util.List;
  */
 public class Room 
 {
+    private String roomName;
     private String description;
     private HashMap<String, Room> exits;
     private List<Item> item = new ArrayList<>();
@@ -32,9 +33,10 @@ public class Room
      * "an open court yard".
      * @param description The room's description.
      */
-    public Room(String description) 
+    public Room(String roomName, String description)
     {
         this.description = description;
+        this.roomName = roomName;
         exits = new HashMap<String, Room>();
     }
 
@@ -78,11 +80,14 @@ public class Room
      */
     public String getLongDescription()
     {
-        String returnString = "You are " + description + ".\n" + getExitString();
-        if (getItem() != null) {
+        String returnString = "You are " + roomName + "\n" + description + ".\n" + getExitString();
+        if (getItem() != null && !getItem().isEmpty()) {
             returnString += "\nAvailable item: ";
-            for (Item i : getItem())
+            for (Item i : getItem()) {
                 returnString += "\n\t" + i.getDescription() + " (" + i.getWeight() + " kg)";
+                if (i.getCost() > 0)
+                    returnString += " " + i.getCost() + "€";
+            }
         }
         return returnString;
     }
@@ -126,6 +131,10 @@ public class Room
                 return door;
         }
         return null;
+    }
+
+    public String getRoomName() {
+        return roomName;
     }
 
 }

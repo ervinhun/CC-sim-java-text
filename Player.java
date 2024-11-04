@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Player {
@@ -8,12 +9,18 @@ public class Player {
     private Room currentRoom;
     private List<Item> inventory = new ArrayList<Item>();
     private List<Room> roomHistory = new ArrayList<Room>();
-
+    private int level;
+    private int money;
+    private int numberOfSteps;
+    private Level levelDetails;
 
     public Player(String name) {
         this.name = name;
         this.maximumWeightToCarry = 20;
         this.health = 100;
+        this.level = 1;
+        this.money = 1000;
+        numberOfSteps = 30;
     }
 
     public String getName() {
@@ -40,7 +47,13 @@ public class Player {
         return currentRoom;
     }
     public void setCurrentRoom(Room currentRoom) {
+        numberOfSteps--;
+        if (numberOfSteps <= 0) {
+            System.out.println("You are too tired to continue");
+
+        }
         this.currentRoom = currentRoom;
+
     }
 
     public List<Room> getRoomHistory() {
@@ -70,7 +83,7 @@ public class Player {
 
 
     public String getInventoryString() {
-        String returnString = "";
+        String returnString = money + "€\n";
         for (Item item : inventory) {
             returnString += item.getName() + " - " + item.getDescription() + " (" + item.getWeight() + "kg)" + "\n";
         }
@@ -86,4 +99,27 @@ public class Player {
     public boolean removeInventory(Item inventory) {
         return this.inventory.remove(inventory);
     }
+
+    public int getLevel() {
+        return level;
+    }
+    public void levelUp() {
+        level++;
+    }
+    public int getMoney() {
+        return money;
+    }
+    public void pay(int money) {
+        this.money -= money;
+    }
+    public void getPaid(int money) {
+        this.money += money;
+    }
+    public int getNumberOfSteps() {
+        return numberOfSteps;
+    }
+    public void setNumberOfSteps(int numberOfSteps) {
+        this.numberOfSteps += numberOfSteps;
+    }
+
 }

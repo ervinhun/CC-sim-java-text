@@ -6,12 +6,14 @@ public enum CommandWord {
     LOOK("look"),
     BACK("back"),
     EAT("eat"),
+    DRINK("drink"),
     TAKE("take"),
     DROP("drop"),
     SAVE("save"),
     LOAD("load"),
     INVENTORY("inventory"),
-    UNKOWN("?");
+    MAP("map"),
+    QUEST("quest");
 
     // The command string.
     private final String commandString;

@@ -8,12 +8,14 @@ public class Item {
     private boolean active = false;
     private boolean canWear = false;
     private boolean canEat = false;
+    private int cost;
 
 
-    public Item(String name, String description, int weight, boolean canWear, boolean canEat, boolean active) {
+    public Item(String name, String description, int weight, int cost, boolean canWear, boolean canEat, boolean active) {
         this.name = name;
         this.description = description;
         this.weight = weight;
+        this.cost = cost;
         this.canWear = canWear;
         this.canEat = canEat;
         this.active = active;
@@ -42,6 +44,12 @@ public class Item {
 
     public boolean isCanEat() {
         return canEat;
+    }
+    public int getCost() {
+        return cost;
+    }
+    public void setCost(int cost) {
+        this.cost = cost;
     }
 
 

@@ -21,12 +21,15 @@ public class Game
 {
     private Parser parser;
     private Player player1;
+    private Texts texts;
+    private Level level;
         
     /**
      * Create the game and initialise its internal map.
      */
     public Game() 
     {
+        texts = new Texts();
         player1 = new Player(getPlayerName());
         createRooms();
         parser = new Parser();
@@ -39,59 +42,154 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, theater, pub, lab, office, cellar;
-        Item hammer, gun, sun, sample, mask, winterCoat, magicCookie, wineKey;
-        Door wineDoor, mainEntrance;
+        Room outside, arrivals, departures, bar, restaurant, lobby, checkinDesk, crewWaiting, idOffice,
+                crewSecurity, security, dutyFree, gateArea, gates1, gates2, visaCheck, ac, acExtra;
+        Item busTicket, sun, coffee, croissant, lunch, salad, wineKey, sculptures, map, id, boardingPass,
+            whiskey, parfum, cigarette, visa, extraBoardingPass, crew, gift;
+        Door wineDoor, mainEntrance, securityDoor, paxSecurity, gate2, crewBoarding, euBoarding, nonEuBoarding;
+
       
         // create the rooms
-        outside = new Room("outside the main entrance of the university");
-        theater = new Room("in a lecture theater");
-        pub = new Room("in the campus pub");
-        lab = new Room("in a computing lab");
-        office = new Room("in the computing admin office");
-        cellar = new Room("in the cellar of the computing office. It is full of wine :)");
+        outside = new Room(texts.getTexts("outsideN"), texts.getTexts("intro1"));
+        arrivals = new Room(texts.getTexts("arrivalN"), texts.getTexts("arrival1"));
+        departures = new Room(texts.getTexts("departuresN"), texts.getTexts("departures1"));
+        bar = new Room(texts.getTexts("barN"), texts.getTexts("bar1"));
+        restaurant = new Room(texts.getTexts("restaurantN"), texts.getTexts("restaurant1"));
+        lobby = new Room(texts.getTexts("lobbyN"), texts.getTexts("lobby1"));
+        checkinDesk = new Room(texts.getTexts("checkindeskN"), texts.getTexts("checkindesk1"));
+        crewWaiting = new Room(texts.getTexts("crewwaitingN"), texts.getTexts("crewwaiting1"));
+        idOffice = new Room(texts.getTexts("idofficeN"), texts.getTexts("idoffice1"));
+        crewSecurity = new Room(texts.getTexts("crewsecurityN"), texts.getTexts("crewsecurity1"));
+        gateArea = new Room(texts.getTexts("gateareaN"), texts.getTexts("gatearea1"));
+        security = new Room(texts.getTexts("securityN"), texts.getTexts("security1"));
+        dutyFree = new Room(texts.getTexts("dutyC"), texts.getTexts("duty"));
+        ac = new Room(texts.getTexts("acC"), texts.getTexts("ac"));
+        gates1 = new Room(texts.getTexts("g1C"), texts.getTexts("g1"));
+        gates2 = new Room(texts.getTexts("g2C"), texts.getTexts("g2"));
+        visaCheck = new Room(texts.getTexts("visaC"), texts.getTexts("visa"));
 
-        sun = new Item("sun", "Sun", 1000, false, false, true);
-        hammer = new Item("hammer", "A huge hammer", 2, false, false, true);
-        gun = new Item("gun", "Gun, .45mm", 1, false, false, true);
-        sample = new Item("sample", "Sample of seamen", 1, false, false, true);
-        mask = new Item("mask", "Theater mask", 1, true, false, true);
-        winterCoat = new Item("coat", "Winter coat", 19, true, false, true);
-        magicCookie = new Item("cookie", "Magic cookie - what could this be?", 12, false, true, true);
-        wineKey = new Item("key", "Key for the wine cellar", 1, false, false, true);
 
+        // create the items
+        sun = new Item(texts.getTexts("sunC"), texts.getTexts("sun"), 1000, 0, false, false, true);
+        busTicket = new Item(texts.getTexts("bustTicketC"), texts.getTexts("busTicket1"), 1, 100,  false, false, true);
+        coffee = new Item(texts.getTexts("coffeeC"), texts.getTexts("coffee"), 1, 2,  false, true, true);
+        croissant = new Item(texts.getTexts("croissantC"), texts.getTexts("croissant"), 1, 3,  false, true, true);
+        lunch = new Item(texts.getTexts("lunchC"), texts.getTexts("lunch"), 1, 15, false, true, true);
+        salad = new Item(texts.getTexts("saladC"), texts.getTexts("salad"), 1, 8, false, true, true);
+        map = new Item(texts.getTexts("mapC"), texts.getTexts("map"), 1, 0, false, false, true);
+        wineKey = new Item("key", "Key for the wine cellar", 1, 0, false, false, true);
+        sculptures = new Item("sculpture", "Sculpture of a dolphin ", 500, 0, false, false, true);
+        id = new Item(texts.getTexts("idC"), texts.getTexts("id"), 1, 50, true, false, true);
+        boardingPass = new Item(texts.getTexts("boardingC"), texts.getTexts("boarding"), 1, 0, false, false, true);
+        extraBoardingPass = new Item(texts.getTexts("boardingC"), texts.getTexts("boarding"), 1, 0, false, false, true);
+        whiskey = new Item(texts.getTexts("whiskeyC"), texts.getTexts("whiskey"), 1, 80, false, true, true);
+        parfum = new Item(texts.getTexts("parfumC"), texts.getTexts("parfum"), 1, 150, false, true, true);
+        cigarette = new Item(texts.getTexts("cigiC"), texts.getTexts("cigi"), 1, 100, false, true, true);
+        visa = new Item(texts.getTexts("visaiC"), texts.getTexts("visai"), 1, 0, false, false, true);
+        crew = new Item(texts.getTexts("crewC"), texts.getTexts("crew"), 0, 0, false, false, true);
+        gift = new Item(texts.getTexts("giftC"), texts.getTexts("gift"), 2, 0, false, false, true);
+
+        //Create the doors
         mainEntrance = new Door("Main gate", false, null, "east");
         wineDoor = new Door("Wine door", true, wineKey, "down");
+        securityDoor = new Door("Security", true, id, "forward");
+        paxSecurity = new Door("Passenger security", true, boardingPass, "forward");
+        gate2 = new Door("non Schengen", true, visa, "left");
+        crewBoarding = new Door("Crew entrance", true, id, "crewexit");
+        euBoarding = new Door("Boarding", true, boardingPass, "forward");
+        nonEuBoarding = new Door("Oversea boarding", true, extraBoardingPass, "forward");
         
         // initialise room exits
-        outside.setExit("east", theater);
-        outside.setExit("south", lab);
-        outside.setExit("west", pub);
-        outside.setExit("down", office);
-        outside.setItem(sun);
+        outside.setExit("left", arrivals);
+        outside.setExit("right", departures);
+        outside.setItem(sun, sculptures);
         outside.setDoors(mainEntrance);
 
-        theater.setExit("west", outside);
-        theater.setItem(sample, mask);
+        arrivals.setExit("right", departures);
+        arrivals.setExit("forward", bar);
+        arrivals.setItem(busTicket);
 
-        pub.setExit("east", outside);
-        pub.setItem(gun, winterCoat);
+        bar.setExit("backward", arrivals);
+        bar.setExit("forward", restaurant);
+        bar.setItem(coffee, croissant);
+        if(player1.getLevel() == 3)
+            bar.setItem(crew);
+        if(player1.getLevel() == 6)
+            bar.setItem(gift);
 
-        lab.setExit("north", outside);
-        lab.setExit("east", office);
-        lab.setItem(wineKey);
+        restaurant.setExit("backward", bar);
+        restaurant.setItem(lunch, salad);
 
-        office.setExit("west", lab);
-        office.setExit("up", outside);
-        office.setExit("down", cellar);
-        office.setItem(hammer);
-        office.setDoors(wineDoor);
+        departures.setExit("left", outside);
+        departures.setExit("forward", lobby);
+        departures.setItem(map);
 
-        cellar.setExit("superup", office);
-        cellar.setItem(magicCookie);
+
+        lobby.setExit("backward", departures);
+        lobby.setExit("forward", crewWaiting);
+        lobby.setExit("right", checkinDesk);
+
+        checkinDesk.setExit("left", lobby);
+        if (player1.getLevel() == 5)
+            checkinDesk.setItem(extraBoardingPass);
+
+        crewWaiting.setExit("right", idOffice);
+        crewWaiting.setExit("backward", lobby);
+        crewWaiting.setExit("forward", crewSecurity);
+
+        idOffice.setExit("left", crewWaiting);
+        if (player1.getLevel() == 1)
+            idOffice.setItem(id);
+
+        crewSecurity.setExit("backward", crewWaiting);
+        crewSecurity.setExit("forward", gateArea);
+        crewSecurity.setDoors(securityDoor);
+
+        security.setExit("left", lobby);
+        security.setExit("forward", dutyFree);
+        security.setDoors(paxSecurity);
+
+        dutyFree.setExit("forward", gateArea);
+        dutyFree.setItem(whiskey, parfum, cigarette);
+
+        if (player1.getLevel() != 2 || player1.getLevel() != 4 || player1.getLevel() != 5)
+            gateArea.setExit("crewexit", ac);
+        gateArea.setExit("left", gates2);
+        gateArea.setExit("right", gates1);
+        gateArea.setExit("forward", visaCheck);
+        gateArea.setExit("backward", dutyFree);
+        gateArea.setDoors(gate2, crewBoarding);
+
+        gates1.setExit("left", gateArea);
+        gates1.setExit("forward", ac);
+        gates1.setDoors();
+
+
+        ac.setExit("levelUp", outside);
+        ac.setExit("backward", gateArea);
+
+
 
         player1.setCurrentRoom(outside);
         player1.setMaximumWeightToCarry(20);
+        int levelNumber = player1.getLevel();
+        switch (levelNumber) {
+            case 2:
+                level = new Level(player1.getLevel(), texts.getTexts("level1Description"), id, ac, 30);
+                break;
+            case 3:
+                level = new Level(player1.getLevel(), texts.getTexts("level2Description"), boardingPass, ac, 30);
+                break;
+            case 4:
+                level = new Level(player1.getLevel(), texts.getTexts("level3Description"), crew, bar, 30);
+                break;
+            case 5:
+                level = new Level(player1.getLevel(), texts.getTexts("level4Description"), extraBoardingPass, ac, 30);
+                break;
+            default:
+                level = new Level(player1.getLevel(), texts.getTexts("level5Description"), gift, ac, 30);
+        }
+        System.out.println(level);
         // start game outside
     }
 
@@ -119,9 +217,7 @@ public class Game
     private void printWelcome()
     {
         System.out.println();
-        System.out.println("Welcome " + player1.getName() + " to the World of Zuul!");
-        System.out.println("World of Zuul is a new, incredibly boring adventure game.");
-        System.out.println("Type 'help' if you need help. Valid commands are: ");
+        System.out.println(texts.getTexts("welcome") + " " + player1.getName() + " " + texts.getTexts("welcome2"));
         System.out.println(getValidCommands() + "\n");
         printLocationInfo();
     }
@@ -162,7 +258,10 @@ public class Game
                 goBack();
                 break;
             case EAT:
-                eat(command);
+                eat(command, false);
+                break;
+            case DRINK:
+                eat(command, true);
                 break;
             case TAKE:
                 take(command);
@@ -179,6 +278,10 @@ public class Game
             case INVENTORY:
                 System.out.println(player1.getInventoryString());
                 break;
+            case MAP:
+                DrawMap map = new DrawMap();
+            /**case MAGYAR:
+                System.out.println("Itt majd lesz valami a nyelvvaltashoz");*/
             case QUIT:
                 wantToQuit = quit(command);
             default:
@@ -219,9 +322,18 @@ public class Game
                         isExists = true;
                         break;
                     }
+                    if(item.getCost() > player1.getMoney()) {
+                        System.out.println("It is too expensive. You have only " + player1.getMoney() + "€");
+                        isExists = true;
+                        break;
+                    }
+                    player1.pay(item.getCost());
+                    System.out.println("You paid " + item.getCost() + "€ for "
+                            + item.getDescription() + ". You have " + player1.getMoney() + "€ left.");
                     player1.setInventory(item);
                     player1.setMaximumWeightToCarry(player1.getMaximumWeightToCarry()-item.getWeight());
-                    player1.getCurrentRoom().removeItem(item);
+                    if (!item.isCanEat())
+                        player1.getCurrentRoom().removeItem(item);
                     isExists = true;
                     System.out.println(item.getDescription() + " has been taken. Now you have it in your inventory");
                     break;
@@ -260,10 +372,19 @@ public class Game
         }
     }
 
-    private void eat(Command command) {
+    private void eat(Command command, boolean drink) {
         if (command.hasSecondWord() && player1.getAnItemFromInventory(command.getSecondWord())!=null
             && player1.getAnItemFromInventory(command.getSecondWord()).isCanEat()) {
-            System.out.println(command.getSecondWord() + " has been eaten. Now you are full");
+            if(!drink)
+                System.out.println(command.getSecondWord() + " has been eaten. Now you are full");
+            if(drink) {
+                System.out.println("You drank the " + command.getSecondWord());
+                if (command.getSecondWord().equals(texts.getTexts("coffeeC"))) {
+                    player1.setNumberOfSteps(5);
+                    System.out.println(player1.getNumberOfSteps());
+                }
+            }
+
             player1.removeInventory(player1.getAnItemFromInventory(command.getSecondWord()));
             player1.setMaximumWeightToCarry(2000);
         }
@@ -315,7 +436,7 @@ public class Game
                     goRoom(command);
                 }
                 else {
-                    System.out.println("First you need to find the key for the door");
+                    System.out.println("First you need to find the key to pass here");
                 }
             }
             else
@@ -325,6 +446,34 @@ public class Game
             player1.addToRoomHistory(player1.getCurrentRoom());
             player1.setCurrentRoom(nextRoom);
             printLocationInfo();
+            checkForWin();
+        }
+    }
+
+    private void checkForWin() {
+        if (player1.getInventory().contains(level.getItemForWin()) && player1.getCurrentRoom() == level.getRoomForWin()) {
+            //TODO: fix why it is not winning
+            System.out.println("You win! Level " + player1.getLevel() + " has been completed");
+            player1.levelUp();
+            Scanner sc = new Scanner(System.in);
+            sc.nextLine();
+            //goRoom(new Command(CommandWord.GO, "levelUp"));
+            processCommand(new Command(CommandWord.GO, "levelUp"));
+            level.setLevel(player1.getLevel());
+            createRooms();
+            System.out.println(level);
+        }
+        else if (player1.getNumberOfSteps() <= 0) {
+            System.out.println("You lost - did not manage to reach the goal of the level\n" +
+                    "Would you like to restart? Y/N");
+            Scanner sc = new Scanner(System.in);
+            if (sc.nextLine().equalsIgnoreCase("y") || sc.nextLine().equalsIgnoreCase("yes")) {
+                String name = player1.getName();
+                player1 = new Player(name);
+                createRooms();
+            }
+            else
+                processCommand(new Command(CommandWord.QUIT, null));
         }
     }
 
@@ -355,7 +504,6 @@ public class Game
         DrawMap map = new DrawMap();
         System.out.println("OK, then again...");
             System.out.println(player1.getCurrentRoom().getLongDescription());
-
     }
 
     private void goBack() {
@@ -377,7 +525,7 @@ public class Game
      */
     private void printLocationInfo()
     {
-        System.out.println("You are " + player1.getCurrentRoom().getLongDescription());
+        System.out.println(player1.getCurrentRoom().getLongDescription());
     }
 
     private String getValidCommands() {
